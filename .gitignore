@@ -1,5 +1,3 @@
 __pycache__/
 *.pyc
-reports/
-demo_workspace/
-.cache/
+infra-scan-reports/
