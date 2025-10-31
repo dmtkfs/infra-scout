@@ -111,27 +111,43 @@ Parses Trivy JSON (real or sample) and counts CRITICAL/HIGH/MED/LOW/UNK. Shows t
 
 ---
 
-#### 4) `canary` [HTTP status & latency probes]
+### 4) `canary` [HTTP status & latency probes]
 
 Pings one or more endpoints and checks:
 
-* **Status:** observed codes vs expected
-* **Latency:** p50/p95 vs thresholds
+- **Status:** observed codes vs expected
+- **Latency:** p50/p95 vs thresholds
 
-*Args:*
+***Args:***
 
-* `--targets '<JSON list>'`, for example:
+- `--targets`: accepts **either**
+  - a JSON string literal, **or**
+  - a path to a `.json` file that contains the list
+- **Examples (string or file):**
+   ```bash
+   # JSON string
+   python infra_scout.py canary --targets '[{"url":"https://example.com/health","expect_status":200,"max_ms_p50":300,"max_ms_p95":800}]'
+   
+   # JSON file
+   python infra_scout.py canary --targets targets.json
+   ````
 
-  ```json
-  [
-    {"url":"https://example.com/health", "expect_status":200, "max_ms_p50":300, "max_ms_p95":800},
-    {"url":"https://example.com/admin" , "expect_status":401, "max_ms_p50":300, "max_ms_p95":800}
-  ]
-  ```
-* `--probes <int>` (default `3`)
-* `--timeout <float>` seconds (default `3.0`)
+**Schema per target:**
 
-*Behavior: If `--targets` omitted, starts a **local demo canary server** on `127.0.0.1:9999` in **auto-fallback** and labels the section `(auto)`. The server is **stopped** at the end.*
+```json
+{
+  "url": "https://example.com/health",
+  "expect_status": 200,
+  "max_ms_p50": 300,
+  "max_ms_p95": 800
+}
+```
+
+* `--probes <int>` (default **3**) — how many times to ping each endpoint
+* `--timeout <float>` seconds (default **3.0**) — per-request timeout
+
+***Behavior:** If `--targets` is omitted, infra-scout starts a **local demo canary server** on `127.0.0.1:9999` in **auto-fallback** mode and labels the section `(auto)`.
+  The server is **stopped** at the end of the run.*
 
 ---
 
